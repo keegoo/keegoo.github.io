@@ -26,7 +26,7 @@ db.users.insertMany([
 ])
 {% endhighlight %}
 
-`ruby mongodb driver`
+`ruby mongo driver`
 
 {% highlight ruby %}
 result = users.insert_one({ name: 'Steve', age: 39 })
@@ -87,7 +87,7 @@ db.users.find({
 })
 {% endhighlight %}
 
-`ruby mongodb driver`
+`ruby mongo driver`
 
 {% highlight ruby %}
 # === find one ===
@@ -156,6 +156,41 @@ User.where({
 User.where({
   "$or": [ {name: "Bob"}, {:age.gt => 20}]
 })
+{% endhighlight %}
+
+## Limit fields
+
+Return specific fields from the query instead of the whole document.
+
+`mongo shell`
+
+{% highlight ruby %}
+# ===  single  ===
+db.users.find({name: "Bob", age: 59}, {age: 1})
+# === multiple ===
+db.users.find({name: "Bob", age: 59}, {name:1, gender: 1})
+{% endhighlight %}
+
+`ruby mongo driver`
+
+{% highlight ruby %}
+# ===  single  ===
+users.find({name: "Bob", age: 59}).projection({age: 1})
+# or
+users.find({name: "Bob", age: 59}, projection: {age: 1})
+
+# === multiple ===
+users.find({name: "Bob", age: 59}).projection({name: 1, gender: 1})
+# or
+users.find({name: "Bob", age: 59}, projection: {name: 1, gender: 1})
+{% endhighlight %}
+
+`mongoid`
+{% highlight ruby %}
+# ===  single  ===
+Users.where({name: "Bob", age: 59}).only(:age)
+# === multiple ===
+Users.where({name: "Bob", age: 59}).only(:name, :gender)
 {% endhighlight %}
 
 ## things need to be digested
