@@ -157,3 +157,60 @@ User.where({
   "$or": [ {name: "Bob"}, {:age.gt => 20}]
 })
 {% endhighlight %}
+
+## things need to be digested
+
+### weird of mongoid
+
+say we had time series data in mongodb as following.
+
+    {
+      "_id" : ObjectId("587c35108fe879199c3a3c07"),
+      "server" : "CONGY-7W4",
+      "time" : "2017-01-13T07:00:00Z",
+      "cpu_percent" : {
+        "0" : {
+          "0" : 20,
+          "6" : 18
+        }
+      }
+    }
+
+you may want to insert another data slice to `cpu_percent`
+
+{% highlight ruby %}
+doc = SystemMonitor.find("587c35108fe879199c3a3c07")
+doc.set("cpu_percent.0.12" => 22)
+{% endhighlight %}
+
+But you would find cpu_percent been overwritten by the new data. 
+
+    {
+      ...
+      "cpu_percent" : {
+        "0" : {
+          "12" : 22
+        }
+      }
+    }
+
+What you were expected to see should be.
+
+    {
+      ...
+      "cpu_percent" : {
+        "0" : {
+          "0" : 20,
+          "6" : 18,
+          "12": 22
+        }
+      }
+    }
+
+How to do that? It turns out you need to use `where` instead of `find` to query the doc at first hand. 
+{% highlight ruby %}
+doc = SystemMonitor.where(server: "CONGY-7W4")
+doc.set("cpu_percent.0.12" => 22)
+{% endhighlight %}
+
+Why?
