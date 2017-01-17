@@ -13,6 +13,33 @@ As `mongoid` is based on `ruby mongodb driver`, `mongoid` suppors what `ruby mon
 
 In MongoDB, a write operation is atomic on the level of a single document, even if the operation modifies multiple embedded documents within a single document.
 
+## versions
+
+    # mongo --version
+    MongoDB shell version: 3.2.11
+
+    # gem list | grep mongo
+    mongo (2.3.1)
+    mongoid (6.0.2)
+
+## data
+
+Following data is just an sample. You could imagine there're many many such examples(documents) in 'users' collection.
+
+{% highlight ruby %}
+{
+  name: "Bob",
+  age: 59,
+  gender: "male"
+  skills: ["C ++", "Java", "Ruby", "Python"],
+  published: {
+    programming: ["10 days to learn C ++", "20 days to learn Java", "1 day to learn Ruby"],
+    sport: ["basketball", "training"]
+  }
+},
+...
+{% endhighlight %}
+
 ## create operation
 
 `mongo shell`
@@ -193,7 +220,38 @@ Users.where({name: "Bob", age: 59}).only(:age)
 Users.where({name: "Bob", age: 59}).only(:name, :gender)
 {% endhighlight %}
 
-## things need to be digested
+## distinct 
+
+The values returned by distinct is an array. 
+
+`mongo shell`
+
+{% highlight ruby %}
+# == collection ==
+db.users.distinct("name")
+# ==  on query ===
+db.users.distinct("age", {name: "Steve", gender: "male"})
+{% endhighlight %}
+
+`ruby mongo driver`
+
+{% highlight ruby %}
+# == collection ==
+users.find().distinct("name")
+# ==  on query ===
+users.find({name: "Steve", gender: "male"}).distinct("age")
+{% endhighlight %}
+
+`mongoid`
+
+{% highlight ruby %}
+# == collection ==
+Users.find().distinct("name")
+# ==  on query ===
+Users.find({name: "Steve", gender: "male"}).distinct("age")
+{% endhighlight %}
+
+## things need to be digested later
 
 ### weird of mongoid
 
