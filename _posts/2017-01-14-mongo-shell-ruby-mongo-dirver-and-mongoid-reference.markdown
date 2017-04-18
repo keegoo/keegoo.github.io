@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "mongo shell, ruby mongo dirver, mongoid up by down reference"
+title:  "mongo shell, ruby mongo dirver and mongoid reference"
 date:   2017-01-14 21:00:00 +0800
 categories: jekyll update
 ---
