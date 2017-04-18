@@ -13,22 +13,23 @@ There're two MongoDB drivers in Ruby: [Ruby MongoDB Driver](https://github.com/m
 
 I always found myself lost in the syntax of these two drivers. So I wrote this article to help me out when I trapped again.
 
+I'm going to show examples in `Mongo Shell`, `Ruby MongoDB Driver` and `Mongoid` for the same MongoDB operations. 
 
-## Sections
+  - [Versions](#versions)
 
-I'm going to write examples in `Mongo Shell`, `Ruby MongoDB Driver` and `Mongoid` for the same MongoDB operations. 
+  - [Test Data](#test-data)
 
-[Versions](#versions)
+  - [Connection](#connection)
 
-[Test Data](#test-data)
+  - [Create Operation](#create-operation)
 
-[Connection](#connection)
+  - [Query Operation](#query-operation)
 
-[Create Operation](#create-operation)
+  - [Arrays and Hashes](#arrays-and-hashes)
 
-[Query Operation](#query-operation)
+  - [Limit Fields](#limit-fields)
 
-[Others](#others)
+  - [Distinct](#distinct)
 
 
 ## Versions
@@ -62,9 +63,10 @@ Mongo provides a very good test data for you to play with. You could import thes
 We don't need to import these data. But we need to keep these data in mind. Basically, we should know:
   - each document represent a *restanrant*; 
   - *restaurant address* is a hash; 
-  - *restaurants grades* is an array.
+  - *restaurants grades* is an array;
+  - *restaurants* has borough, cuisine and restaurant_id.
 
-{% highlight json %}
+```javascript
 [
   {
     "address": {
@@ -85,14 +87,14 @@ We don't need to import these data. But we need to keep these data in mind. Basi
     "name": "Morris Park Bake Shop",
     "restaurant_id": "30075445"
   },
-  ...
+  // ...
 ]
-{% endhighlight %}
+```
 
 
 ## Connection
 
-`Mongo Shell`
+`mongo shell`
 
 ```shell
 MyBook:~ keegoo$ mongo 127.0.0.1:27017/test -u <dbuser> -p <dbpassword>
@@ -100,7 +102,7 @@ MyBook:~ keegoo$ mongo 127.0.0.1:27017/test -u <dbuser> -p <dbpassword>
 # MyBook:~ keegoo$ mongo
 ```
 
-`Ruby Mongo Driver`
+`ruby mongo driver`
 
 ```ruby
 require 'mongo'
@@ -118,7 +120,7 @@ options = {
 client = Mongo::Client.new(host, options)
 ```
 
-`Mongoid`
+`mongoid`
 
 Create a `mongoid.yml` file with following content.
 
@@ -145,7 +147,7 @@ Connect.
 ```ruby
 require 'mongoid'
 
-Mongoid.load!("mongoid.yml", :production)
+Mongoid.load!("mongoid.yml", :development)
 ```
 
 ## Create Operation
@@ -305,71 +307,117 @@ Restaurant.where({
 })
 ```
 
-## Limit fields
+## Arrays and Hashes
+
+`mongo shell`
+
+```javascript
+// ====  hash  ====
+db.restaurants.find({ 'address.building': '1007' })
+// ====  array ====
+db.restaurants.find({ 'address.coord.0': -73.856077 })
+// == array size ==
+db.restaurants.find({ 'address.coord': {$size: 2} })
+// = array & hash =
+db.restaurants.find({ grades: {$elemMatch: {grade: 'C', score: 10} } })
+```
+
+`ruby mongo driver`
+
+```ruby
+# ====  hash  ====
+client["restaurants"].find({ "address.building": "1007" })
+# ====  array ====
+client["restaurants"].find({ "address.coord.0": -73.856077 })
+# == array size ==
+client["restaurants"].find({ "address.coord" => {"$size" => 2} })
+# = array & hash =
+client["restaurants"].find({ grades: {"$elemMatch" => {grade: "C", score: 10}} })
+```
+
+`mongoid`
+
+```ruby
+# ====  hash  ====
+Restaurant.where({ "address.building": "1007" })
+# ====  array ====
+Restaurant.where({ "address.coord.0": -73.856077 })
+# == array size ==
+Restaurant.where({ "address.coord" => {"$size" => 2} })
+# = array & hash =
+Restaurant.where({ grades: {"$elemMatch" => {grade: "C", score: 10}} })
+```
+
+## Limit Fields
 
 Return specific fields from the query instead of the whole document.
 
 `mongo shell`
 
-{% highlight ruby %}
-# ===  single  ===
-db.users.find({name: "Bob", age: 59}, {age: 1})
-# === multiple ===
-db.users.find({name: "Bob", age: 59}, {name:1, gender: 1})
-{% endhighlight %}
+```javascript
+// ===  single  ===
+db.restaurants.find({borough: 'Bronx', cuisine: 'Bakery'}, {name: 1})
+// === multiple ===
+db.restaurants.find({borough: 'Bronx', cuisine: 'Bakery'}, {name: 1, restaurant_id: 1})
+```
 
 `ruby mongo driver`
 
-{% highlight ruby %}
+```ruby
 # ===  single  ===
-users.find({name: "Bob", age: 59}).projection({age: 1})
+client['restaurants'].find({borough: "Bronx", cuisine: "Bakery"}).projection({name: 1})
 # or
-users.find({name: "Bob", age: 59}, projection: {age: 1})
+client['restaurants'].find({borough: "Bronx", cuisine: "Bakery"}, projection: {name: 1})
 
 # === multiple ===
-users.find({name: "Bob", age: 59}).projection({name: 1, gender: 1})
+client['restaurants'].find({borough: "Bronx", cuisine: "Bakery"}).projection({name: 1, restaurant_id: 1})
 # or
-users.find({name: "Bob", age: 59}, projection: {name: 1, gender: 1})
-{% endhighlight %}
+client['restaurants'].find({borough: "Bronx", cuisine: "Bakery"}, projection: {name: 1, restaurant_id: 1})
+```
 
 `mongoid`
-{% highlight ruby %}
+```ruby
+# ...
+# omit class definition
 # ===  single  ===
-Users.where({name: "Bob", age: 59}).only(:age)
+Restaurant.where({borough: "Bronx", cuisine: "Bakery"}).only(:name)
 # === multiple ===
-Users.where({name: "Bob", age: 59}).only(:name, :gender)
-{% endhighlight %}
+Restaurant.where({borough: "Bronx", cuisine: "Bakery"}).only(:name, :restaurant_id)
+```
 
-## distinct 
+## Distinct 
 
 The values returned by distinct is an array. 
 
 `mongo shell`
 
-{% highlight ruby %}
-# == collection ==
-db.users.distinct("name")
-# ==  on query ===
-db.users.distinct("age", {name: "Steve", gender: "male"})
-{% endhighlight %}
+```javascript
+// == collection ==
+db.restaurants.distinct('name')
+// ==  on query ===
+db.restaurants.distinct('name', {borough: 'Bronx', cuisine: 'Bakery'})
+```
 
 `ruby mongo driver`
 
-{% highlight ruby %}
+```ruby
 # == collection ==
-users.find().distinct("name")
+client["restaurants"].find().distinct("name")
 # ==  on query ===
-users.find({name: "Steve", gender: "male"}).distinct("age")
-{% endhighlight %}
+client["restaurants"].find({borough: "Bronx", cuisine: "Bakery"}).distinct("name")
+```
 
 `mongoid`
 
-{% highlight ruby %}
+```ruby
 # == collection ==
-Users.find().distinct("name")
+Restaurant.where({}).distinct("name")
 # ==  on query ===
-Users.find({name: "Steve", gender: "male"}).distinct("age")
-{% endhighlight %}
+Restaurant.where({borough: "Bronx", cuisine: "Bakery"}).distinct("name")
+```
+
+
+## (not finished)things need to be digested later
 
 ## sort
 
@@ -387,7 +435,6 @@ db.schedulers.find().sort({'schedule.time': -1})
 Scheduler.order_by("schedule.time" => :desc).limit(30)
 {% endhighlight %}
 
-## things need to be digested later
 
 ### weird of mongoid
 
@@ -449,3 +496,10 @@ Why?
 #### atomic writes
 
 In MongoDB, a write operation is atomic on the level of a single document, even if the operation modifies multiple embedded documents within a single document.
+
+#### Date
+```javascript
+// ====  date  ====
+db.restaurants.find({ 'grades.0.date': new Date(1393804800000) })
+// new Date(1393804800000) matched { "$date": 1393804800000 }
+```
