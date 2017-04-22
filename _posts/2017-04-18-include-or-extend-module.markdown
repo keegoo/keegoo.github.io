@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "include or extend module"
+title:  "include or extend module in Ruby class"
 date:   2017-04-18 16:15:00 +0800
 categories: jekyll update
 ---
@@ -8,11 +8,11 @@ categories: jekyll update
 
 ### Basics
 
-Let's say we have class A and module Utils.
+Let's say we have *class* A and *module* Utils.
 
-If I `include Utils` inside class A, then all the **instance** methods of Utils became the **instance** methods of A.
+If we `include Utils` inside A, then all of Utils' **instance** methods became A's **instance** methods.
 
-If I `extend Utils` inside class A, then all the **instance** methods of Utils became the **class** methods of A.
+If we `extend Utils` inside A, then all of Utils' **instance** methods became A's **class** methods.
 
 For example:
 
@@ -20,10 +20,6 @@ For example:
 module Utils
   def say_hi
     puts "hi, i'm #{Utils.name}."
-  end
-
-  def self.wont_be_called
-    puts "it's so sad i'm class method and won't be accessed by A"
   end
 end
 ```
@@ -34,7 +30,6 @@ end
 
 A.new.say_hi      # => hi, i'm Utils.
 A.say_hi          # => NoMethodError
-A.wont_be_called  # => NoMethodError
 ```
 ```ruby
 class A
@@ -43,36 +38,47 @@ end
 
 A.new.say_hi      # => NoMethodError
 A.say_hi          # => hi, i'm Utils.
-A.wont_be_called  # => NoMethodError
 ```
 
-Several things you should keep in mind:
+Two things we should keep in mind:
 
-  - Both `include` and `extend` have nothing to do with class methods of Utils module.
-  - Both `include` and `extend` expect a module which means you cannot `include/extend a_class`.
-  - Module cannot be instanced. You cannot `a_module.new`.
+  - Both `include` and `extend` expect a *module* which means you cannot `include/extend a_class`.
 
+```ruby
+class Utils       # Utils is a class this time
+  def say_hi
+    puts "hi, i'm #{Utils.name}."
+  end
+end
+
+class A
+  include Utils   # => TypeError: wrong argument type Class (expected Module)
+end
+```
+
+  - Both `include` and `extend` won't touch Utils' class methods.
+
+```ruby
+module Utils
+  def self.say_hi # => say_hi is a class method this time
+    puts "hi, i'm #{Utils.name}."
+  end
+end
+
+class A
+  include Utils
+end
+
+A.say_hi        # => NoMethodError
+```
 
 ### extend self
 
-Let's go through some knowledges before dive in:
-  - class is meant for data and behavior; module is meant for behavior only.
-  - module is more light weight compared with class.
+By using `include/extend`, class A could make use of Utils' instance methods(a.k.a Mixin). 
 
-So if you want to wrap behavior only, you'd better choose module over class.
+But as *module* cannot be instanced, how can *module* access these useful instance methods itself?
 
-Following ruby core libs are all modules:
-
-```ruby
-Base64.class    #=> Module 
-Benchmark.class #=> Module 
-FileUtils.class #=> Module 
-Math.class      #=> Module
-```
-
-In following example. 
-
-As module cannot be instanced, how can I access these useful methods?
+For example: 
 
 ```ruby
 module Utils
@@ -82,19 +88,14 @@ module Utils
 
   def useful_method_2
     puts "do that"
-  end
-
-  def self.will_be_called
-    puts "so happy i can be accessed by #{Utils.name}"
   end
 end
 
 Utils.new.useful_method_1       # => NoMethodError, undefined method `new' for Utils:Module
 Utils.useful_method_1           # => NoMethodError
-Utils.will_be_called            # => so happy i can be accessed by Utils
 ```
 
-It turns out we could `extend self` inside module Utils. This will turn Utils' instance methods into class methods. Then we could access them by `Utils.method_name`.
+It turns out we could `extend self` inside module Utils. This will turn Utils' instance methods into Utils' class methods. Then we could access them by `Utils.method_name`.
 
 ```ruby
 module Utils
@@ -104,10 +105,6 @@ module Utils
 
   def useful_method_2
     puts "do that"
-  end
-
-  def self.will_be_called
-    puts "so happy i can be accessed by #{Utils.name}"
   end
 
   extend self
@@ -115,7 +112,6 @@ end
 
 Utils.useful_method_1           # => do this
 Utils.useful_method_2           # => do that
-Utils.will_be_called            # => so happy i can be accessed by Utils
 ```
 
 The instance methods `useful_method_1` and `useful_method_2` are still there. So you still can use `include/extend Utils` inside class A to access them as instance methods.
@@ -125,7 +121,7 @@ The instance methods `useful_method_1` and `useful_method_2` are still there. So
 
 `self.included` will be called when the module been included by other class. It's one pupular Ruby meta programming hook.
 
-Take this for example:
+For example:
 
 ```ruby
 module Utils
@@ -147,16 +143,16 @@ Examples [refered to](http://www.railstips.org/blog/archives/2009/05/15/include-
 ```ruby
 module Utils
   def self.included(boss)
-    boss.extend(ClassMethods)
+    boss.extend(ClassMethods) # => boss refers to class A
   end
 
   module ClassMethods
-    def useful_method_1
+    def useful_method_1       # => become A's class method
       puts "do this"
     end
   end
 
-  def useful_method_2
+  def useful_method_2         # => become A's instance method
     puts "do that"
   end
 end
