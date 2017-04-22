@@ -42,20 +42,6 @@ A.say_hi          # => hi, i'm Utils.
 
 Two things we should keep in mind:
 
-  - Both `include` and `extend` expect a *module* which means you cannot `include/extend a_class`.
-
-```ruby
-class Utils       # Utils is a class this time
-  def say_hi
-    puts "hi, i'm #{Utils.name}."
-  end
-end
-
-class A
-  include Utils   # => TypeError: wrong argument type Class (expected Module)
-end
-```
-
   - Both `include` and `extend` won't touch Utils' class methods.
 
 ```ruby
@@ -70,6 +56,26 @@ class A
 end
 
 A.say_hi        # => NoMethodError
+
+class B
+  extend Utils
+end
+
+B.say_hi        # => NoMethodError
+```
+
+  - Both `include` and `extend` expect a *module* which means you cannot `include/extend a_class`.
+
+```ruby
+class Utils       # Utils is a class this time
+  def say_hi
+    puts "hi, i'm #{Utils.name}."
+  end
+end
+
+class A
+  include Utils   # => TypeError: wrong argument type Class (expected Module)
+end
 ```
 
 ### extend self
@@ -138,7 +144,7 @@ end
 
 With this hook, as the author of Utils module, we could decide which methods become A's **instance** methods and which methods become A's **class** methods. 
 
-Examples [refered to](http://www.railstips.org/blog/archives/2009/05/15/include-vs-extend-in-ruby/). In this example, I want `useful_method_1` became A's class method and `useful_method_2` became A's instance method.
+Examples [reference](http://www.railstips.org/blog/archives/2009/05/15/include-vs-extend-in-ruby/). In this example, I want `useful_method_1` became A's class method and `useful_method_2` became A's instance method.
 
 ```ruby
 module Utils
