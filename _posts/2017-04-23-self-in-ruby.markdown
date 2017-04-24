@@ -31,7 +31,7 @@ end
 
 If you execute above code, it will output "hi, I'm A". And *class* A will have `#do_this` instance method defined. 
 
-This means Ruby will execute the codes between `class` and `end` and use the result as class definition.
+Actually Ruby will execute the codes between `class` and `end` and use the result as class definition.
 
 ### self definition
 
@@ -44,7 +44,7 @@ In above example we can tell `self` refers to *class* A which meets the first ex
 
 It also meets the second expression as **A**(class) itself is an instance of class `Class`.
 
-Following example demonstrate `self` in different situations:
+Following example demonstrates `self` in different situations:
 
 ```ruby
 class A

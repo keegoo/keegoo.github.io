@@ -16,19 +16,12 @@ I always found myself lost in the syntax of these two drivers. So I wrote this a
 I'm going to show examples in `Mongo Shell`, `Ruby MongoDB Driver` and `Mongoid` for the same MongoDB operations. 
 
   - [Versions](#versions)
-
   - [Test Data](#test-data)
-
   - [Connection](#connection)
-
   - [Create Operation](#create-operation)
-
   - [Query Operation](#query-operation)
-
   - [Arrays and Hashes](#arrays-and-hashes)
-
   - [Limit Fields](#limit-fields)
-
   - [Distinct](#distinct)
 
 
