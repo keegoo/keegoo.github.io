@@ -16,7 +16,7 @@ It's a minimum setup for:
 
 Let's say our project folder is called `react_demo`. 
 
-> Following commands are all supposed to be executed under `react-demo` folder !
+> Following commands are all supposed to be executed under `react-demo` folder!
 
 #### Step 1 - create folder structure
 
@@ -116,6 +116,92 @@ ReactDOM.render(<App />, document.getElementById("main"))
 ~$ ./node_modules/.bin/webpack -d
 ```
 
-#### Now open index.html and take a look!
+#### Test
+
+    Open index.html and take a look!
 
 ## Redux
+
+Let's say our project folder is called `redux_demo`. 
+
+> Following commands are all supposed to be executed under `redux-demo` folder!
+
+#### Step 1 - create package.json
+
+```shell
+npm init --yes
+```
+
+#### Step 2 - install redux and webpack
+
+```shell
+npm install --save-dev redux
+npm install --save-dev webpack
+```
+
+#### Step 3 - create webpack.config.js
+
+```javascript
+var webpack = require('webpack');
+ 
+module.exports = {
+  entry: 'voting.js',
+  output: {
+    filename: 'bundle.js'
+  },
+  module: {
+    loaders: [
+      {
+        test: /\.js$/,
+        loader: "babel-loader",
+        query: {
+          presets: ['es2015']
+        }
+      }
+    ]
+  }
+};
+// entry:     entry point tells webpack where to start.
+// output:    tells webpack where to output bundled codes.
+// test:      a regular expression that tests what kind of files to run through this loader
+// query:     loader options. Here 'es2015' is a preset for babel-loader.
+```
+
+#### Step 4 - create voting.js
+
+```javascript
+import { createStore } from 'redux'
+
+const counter = (state = 0, action) => {
+  switch (action.type) {
+    case 'INCREMENT':
+      return state + 1
+    case 'DESCREMENT':
+      return state - 1
+    default:
+      return state 
+  }
+}
+
+const store = createStore(counter)
+// ---------------------------
+// output counter when action been dispatched.
+const render = () => {
+  console.log('current state is: ' + store.getState())
+}
+store.subscribe(render)
+// ---------------------------
+store.dispatch({type: 'INCREMENT'})
+```
+
+#### Final - bunlde
+
+```shell
+~$ ./node_modules/.bin/webpack -d
+```
+
+#### Test
+
+```shell
+~$ node bundle.js     # => current state is: 1
+```
