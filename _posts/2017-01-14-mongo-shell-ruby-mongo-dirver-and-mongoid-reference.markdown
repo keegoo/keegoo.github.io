@@ -21,6 +21,7 @@ I'm going to show examples in `Mongo Shell`, `Ruby MongoDB Driver` and `Mongoid`
   - [Create Operation](#create-operation)
   - [Query Operation](#query-operation)
   - [Arrays and Hashes](#arrays-and-hashes)
+  - [Update Operation](#update-operation)
   - [Limit Fields](#limit-fields)
   - [Distinct](#distinct)
 
@@ -193,6 +194,8 @@ Restaurant.create([
 `mongo shell`
 
 ```javascript
+// == find by ID ==
+db.restaurants.find(ObjectId('58f4baa603bb14a0c4306289'))
 // === find one ===
 db.restaurants.findOne({name: 'my restaurants'})
 // === find many ==
@@ -224,6 +227,8 @@ db.restaurants.find({
 `ruby mongo driver`
 
 ```ruby
+# == find by ID ==
+client["restaurants"].find({ _id: BSON::ObjectId("58f4baa603bb14a0c4306289")})
 # === find one ===
 client["restaurants"].find({name: "my restaurants"}).first
 # === find many ==
@@ -264,7 +269,8 @@ class Restaurant
   field :address, type: Hash
   field :grades,  type: Array
 end
-
+# == find by ID ==
+Restaurant.find("58f4baa603bb14a0c4306289")
 # === find one ===
 Restaurant.where({name: "my restaurants"}).first
 # === find many ==
@@ -339,6 +345,83 @@ Restaurant.where({ "address.coord.0": -73.856077 })
 Restaurant.where({ "address.coord" => {"$size" => 2} })
 # = array & hash =
 Restaurant.where({ grades: {"$elemMatch" => {grade: "C", score: 10}} })
+```
+
+## Update Operation
+
+`mongo shell`
+
+```javascript
+// == update one ==
+db.restaurants.update(
+  { _id: ObjectId('58f4cad08fb238094bd9f518') }, 
+  { $set: {name: 'keegoo'} }
+)
+// = update multi =
+db.restaurants.update(
+  { name: 'my restaurants 01' }, 
+  { $set: {name: 'my restaurants 02'} }, 
+  { multi: true }
+)
+// = create if not find =
+db.restaurants.update(
+  { name: 'a wierd name' }, 
+  { $set: {name: 'my restaurants 01', borough: 'Shenzhen'} }, 
+  { upsert: true }
+)
+// ====  array ====
+db.restaurants.update(
+  { _id: ObjectId("58f4baa603bb14a0c4306289") }, 
+  { $set: {'address.coord.0': 25.0000} }
+)
+// ====  hash  ====
+db.restaurants.update(
+  { _id: ObjectId("58f4baa603bb14a0c4306289") }, 
+  { $set: {'address.zipcode': '438620'} }
+)
+```
+
+`ruby mongo driver`
+
+```ruby
+# == update one ==
+client["restaurants"].update_one(
+  { _id: BSON::ObjectId("58f4cad08fb238094bd9f518") },
+  { "$set": {name: "my restaurants 02"} }
+)
+# = update multi =
+puts client["restaurants"].update_many(
+  { name: "my restaurants 02" }, 
+  { "$set": {name: "my restaurants 01"} }
+)
+# = create if not find =
+client["restaurants"].update_one(
+  { name: "a wierd name" }, 
+  { "$set": {name: "my restaurants 01", borough: "Shenzhen"} }, 
+  { upsert: true }
+)
+# ====  array ====
+client["restaurants"].update_one(
+  { _id: BSON::ObjectId("58f4baa603bb14a0c4306289") },
+  { "$set": {"address.coord.0" => 25.0000} }
+)
+# ====  hash  ====
+client["restaurants"].update_one(
+  { _id: BSON::ObjectId("58f4baa603bb14a0c4306289") }, 
+  { "$set": {"address.zipcode" => "438620"} }
+)
+```
+
+`mongoid`
+
+```ruby
+# == update one ==
+Restaurant.find("58f4cad08fb238094bd9f518").update(name: "my restaurants 02")
+# = update multi =
+Restaurant.where({name: "my restaurants 01"}).update_all(name: "my restaurants 02")
+# = create if not find =
+
+['continue later ...']
 ```
 
 ## Limit Fields
