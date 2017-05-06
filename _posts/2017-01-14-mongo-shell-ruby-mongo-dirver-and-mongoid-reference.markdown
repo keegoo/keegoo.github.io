@@ -19,6 +19,7 @@ I'm going to show examples in `Mongo Shell`, `Ruby MongoDB Driver` and `Mongoid`
   - [Test Data](#test-data)
   - [Connection](#connection)
   - [Create Operation](#create-operation)
+  - [Exists](#exists)
   - [Query Operation](#query-operation)
   - [Arrays and Hashes](#arrays-and-hashes)
   - [Update Operation](#update-operation)
@@ -188,6 +189,28 @@ Restaurant.create([
   {name: "my restaurants 02", borough: "Shenzhen", cuisine: "Soup"}
 ])
 ```
+
+
+## Exists
+
+`mongo shell`
+
+```javascript
+db.generators.find({name: 'my restaurants 01'}).count()
+```
+
+`Ruby Mongo Driver`
+
+```ruby
+client["restaurants"].find({name: "my restaurants 01"}).count()
+```
+
+`Mongoid`
+
+```ruby
+Restaurant.where({name: "my restaurants 01"}).exists?
+```
+
 
 ## Query Operation
 
