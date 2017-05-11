@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "es6 + react/redux minimute env setup"
+title:  "es6 + react/redux minimum env setup"
 date:   2017-04-24 15:00:00 +0800
 categories: jekyll update
 ---
