@@ -23,6 +23,7 @@ I'm going to show examples in `Mongo Shell`, `Ruby MongoDB Driver` and `Mongoid`
   - [Query Operation](#query-operation)
   - [Arrays and Hashes](#arrays-and-hashes)
   - [Update Operation](#update-operation)
+  - [Field Update Operation](#field-update-operation)
   - [Limit Fields](#limit-fields)
   - [Distinct](#distinct)
 
@@ -413,7 +414,7 @@ client["restaurants"].update_one(
   { "$set": {name: "my restaurants 02"} }
 )
 # = update multi =
-puts client["restaurants"].update_many(
+client["restaurants"].update_many(
   { name: "my restaurants 02" }, 
   { "$set": {name: "my restaurants 01"} }
 )
@@ -446,6 +447,45 @@ Restaurant.where({name: "my restaurants 01"}).update_all(name: "my restaurants 0
 
 ['continue later ...']
 ```
+
+
+## Field Update Operation
+
+`mongo shell`
+
+```javascript
+// =====  inc =====
+db.restaurants.update(
+  { _id: ObjectId("58f4baa603bb14a0c4304e19") }, 
+  { $inc: {"address.coord.0": 10, "address.coord.1": -20 } }
+)
+
+// =====  mul =====
+db.restaurants.update(
+  { _id: ObjectId("58f4baa603bb14a0c4304e19") }, 
+  { $mul: { "address.coord.0": 1.10, "address.coord.1": 2 }}
+)
+
+// ==== rename ====
+
+```
+
+`ruby mongo driver`
+
+```ruby
+
+```
+
+`mongoid`
+
+```ruby
+# =====  inc =====
+Restaurant.find("58f4baa603bb14a0c4304e19").inc({"address.coord.0" => 10, "address.coord.1" => -20})
+
+# =====  mul =====
+# couldn't find any ...
+```
+
 
 ## Limit Fields
 
