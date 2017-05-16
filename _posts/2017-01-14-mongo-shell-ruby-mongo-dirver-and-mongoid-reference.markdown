@@ -525,7 +525,16 @@ db.restaurants.update(
 `ruby mongo driver`
 
 ```ruby
-
+# =====  inc =====
+client["restaurants"].update_one(
+  { _id: BSON::ObjectId("58f4baa603bb14a0c4304e19") },
+  { "$inc": {"address.coord.0": 10, "address.coord.1": -20} }
+)
+// =====  mul =====
+client["restaurants"].update_one(
+  { _id: BSON::ObjectId("58f4baa603bb14a0c4304e19") },
+  { "$mul": {"address.coord.0": 1.10, "address.coord.1": 2} }
+)
 ```
 
 `mongoid`
