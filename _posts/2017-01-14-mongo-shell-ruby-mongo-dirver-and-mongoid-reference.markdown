@@ -395,13 +395,32 @@ db.restaurants.update(
 )
 // ====  array ====
 db.restaurants.update(
-  { _id: ObjectId("58f4baa603bb14a0c4306289") }, 
+  { _id: ObjectId('58f4baa603bb14a0c4306289') }, 
   { $set: {'address.coord.0': 25.0000} }
+)
+db.restaurants.update(
+  { 
+    _id: ObjectId('58f4baa603bb14a0c4304e19'), 
+    // 'address.coord': -58 match a position in 'coord' array.
+    'address.coord': -58 
+  }, 
+  // '$' in 'address.coord.$' is this position.
+  { $set: {'address.coord.$': 21} } 
 )
 // ====  hash  ====
 db.restaurants.update(
   { _id: ObjectId("58f4baa603bb14a0c4306289") }, 
   { $set: {'address.zipcode': '438620'} }
+)
+// = array & hash =
+db.restaurants.update(
+  { 
+    _id: ObjectId('58f4baa603bb14a0c4304e19'), 
+    // 'grades.date': ISODate('2014-09-06T00:00:00Z') match a position in 'grades' array.
+    'grades.date': ISODate('2014-09-06T00:00:00Z')
+  }, 
+  // '$' in 'grades.$.grade' is this position.
+  { $set: {"grades.$.grade": 'B'} }
 )
 ```
 
@@ -429,10 +448,29 @@ client["restaurants"].update_one(
   { _id: BSON::ObjectId("58f4baa603bb14a0c4306289") },
   { "$set": {"address.coord.0" => 25.0000} }
 )
+client["restaurants"].update_one(
+  {
+    _id: BSON::ObjectId("58f4baa603bb14a0c4304e19"),
+    # "address.coord": -58 match a position in "coord" array.
+    'address.coord': -58
+  },
+  # "$" in "address.coord.$" is this position.
+  { "$set": {"address.coord.$": 21} }
+)
 # ====  hash  ====
 client["restaurants"].update_one(
   { _id: BSON::ObjectId("58f4baa603bb14a0c4306289") }, 
   { "$set": {"address.zipcode" => "438620"} }
+)
+# = array & hash =
+client["restaurants"].update_one(
+  { 
+    _id: BSON::ObjectId("58f4baa603bb14a0c4304e19"), 
+    # "grades.date": ... match a position in "grades" array.
+    "grades.date": DateTime.strptime("2014-09-06", "%Y-%m-%d")
+  }, 
+  # "$" in "grades.$.grade" is this position.
+  { "$set": {"grades.$.grade": 'B'} }
 )
 ```
 
