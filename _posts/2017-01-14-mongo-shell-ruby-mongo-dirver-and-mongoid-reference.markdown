@@ -446,13 +446,13 @@ client["restaurants"].update_one(
 # ====  array ====
 client["restaurants"].update_one(
   { _id: BSON::ObjectId("58f4baa603bb14a0c4306289") },
-  { "$set": {"address.coord.0" => 25.0000} }
+  { "$set": {"address.coord.0": 25.0000} }
 )
 client["restaurants"].update_one(
   {
     _id: BSON::ObjectId("58f4baa603bb14a0c4304e19"),
     # "address.coord": -58 match a position in "coord" array.
-    'address.coord': -58
+    "address.coord": -58
   },
   # "$" in "address.coord.$" is this position.
   { "$set": {"address.coord.$": 21} }
@@ -460,7 +460,7 @@ client["restaurants"].update_one(
 # ====  hash  ====
 client["restaurants"].update_one(
   { _id: BSON::ObjectId("58f4baa603bb14a0c4306289") }, 
-  { "$set": {"address.zipcode" => "438620"} }
+  { "$set": {"address.zipcode": "438620"} }
 )
 # = array & hash =
 client["restaurants"].update_one(
@@ -470,7 +470,7 @@ client["restaurants"].update_one(
     "grades.date": DateTime.strptime("2014-09-06", "%Y-%m-%d")
   }, 
   # "$" in "grades.$.grade" is this position.
-  { "$set": {"grades.$.grade": 'B'} }
+  { "$set": {"grades.$.grade": "B"} }
 )
 ```
 
@@ -482,8 +482,22 @@ Restaurant.find("58f4cad08fb238094bd9f518").update(name: "my restaurants 02")
 # = update multi =
 Restaurant.where({name: "my restaurants 01"}).update_all(name: "my restaurants 02")
 # = create if not find =
-
-['continue later ...']
+# ...couldn't find a way...
+# ====  array ====
+Restaurant.where(_id: "58f4baa603bb14a0c4306289").set({"address.coord.0": 25.000})
+Restaurant.where({
+  _id: "58f4baa603bb14a0c4304e19",
+  # "address.coord": -58 match a position in "coord" array.
+  'address.coord': -58
+}).set("address.coord.$": 21)
+# ====  hash  ====
+Restaurant.where(_id: "58f4baa603bb14a0c4306289").set({"address.zipcode": "438620"})
+# = array & hash =
+Restaurant.where({
+  _id: BSON::ObjectId("58f4baa603bb14a0c4304e19"),
+  # "grades.date": ... match a position in "grades" array.
+  "grades.date": DateTime.strptime("2014-09-06", "%Y-%m-%d")
+}).set("grades.$.grade": "B")
 ```
 
 
