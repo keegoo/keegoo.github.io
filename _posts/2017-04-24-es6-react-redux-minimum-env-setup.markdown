@@ -26,7 +26,7 @@ Let's say our project folder is called `react_demo`.
 ~$ mkdir build
 ~$ touch webpack.config.js
 ~$ touch index.html
-# your react_demo folder structure should be:
+# by far, your react_demo folder structure should be:
 # ├── build
 # ├── src
 # │   └── App.jsx
@@ -48,9 +48,9 @@ npm install --save-dev babel-core babel-preset-es2015 babel-loader babel-preset-
 # babel-preset-es2015:  compiles ES2015 to ES5.
 # babel-loader:         transpiling JavaScript files using Babel and webpack.
 # babel-preset-react:   strip flow types and transform JSX into createElement calls.
-npm install --save-dev react react-dom
+npm install --save react react-dom
 # react and react-dom been seperated from version 0.14.
-npm install --save-dev webpack
+npm install --save webpack
 ```
 
 #### Step 4 - edit webpack.config.js
@@ -113,12 +113,20 @@ ReactDOM.render(<App />, document.getElementById("main"))
 #### Final - bundle
 
 ```shell
-~$ ./node_modules/.bin/webpack -d
+./node_modules/.bin/webpack -d
 ```
 
 #### Test
 
-    Open index.html and take a look!
+You would find a list of [one-line-servers](https://gist.github.com/willurd/5720255) implemented in different languages.
+
+For me, I use 
+
+    ruby -run -ehttpd . -p8000
+
+Open `http://127.0.0.1:8000/` and take a look!
+
+(It's not recommeneded, but you could simply `open index.html locally with chrome`  and take a look).
 
 ## Redux
 
@@ -135,8 +143,8 @@ npm init --yes
 #### Step 2 - install redux and webpack
 
 ```shell
-npm install --save-dev redux
-npm install --save-dev webpack
+npm install --save redux
+npm install --save webpack
 ```
 
 #### Step 3 - create webpack.config.js
@@ -197,11 +205,11 @@ store.dispatch({type: 'INCREMENT'})
 #### Final - bunlde
 
 ```shell
-~$ ./node_modules/.bin/webpack -d
+./node_modules/.bin/webpack -d
 ```
 
 #### Test
 
 ```shell
-~$ node bundle.js     # => current state is: 1
+node bundle.js     # => current state is: 1
 ```
