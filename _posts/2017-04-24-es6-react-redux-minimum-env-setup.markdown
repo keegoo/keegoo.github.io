@@ -10,6 +10,7 @@ This tutorial serves more as a renference than a detailed howto.
 It's a minimum setup for:
 
   - [ES6 + ReactJS](#reactjs)
+  - [ES6 + ReactJS + transform-class-properties](#es6-reactjs-transform-class-properties)
   - [ES6 + Redux](#redux)
 
 ## ReactJS
@@ -127,6 +128,64 @@ For me, I use
 Open `http://127.0.0.1:8000/` and take a look!
 
 (It's not recommeneded, but you could simply `open index.html locally with chrome`  and take a look).
+
+
+## ES6 ReactJS transform-class-properties
+
+#### Explain
+
+With `transform-class-properties` plugin we could do `static in class` and `property initialize`. e.g:
+
+```javascript
+class App extends React.Component {
+  // ...
+  static propTypes = {
+    disabled: PropTypes.bool
+  }
+  // ...
+  state = {
+    shouldShowBox: true
+  }
+  // ...
+  toggleBox = () => {
+    this.setState({
+      shouldShowBox: !this.state.shouldShowBox
+    })
+  }
+}
+```
+
+#### Adjusted Steps
+
+for `Step 3`, we need to add:
+
+```shell
+npm install --save-dev babel-plugin-transform-class-properties
+# babel-plugin-transform-class-properties   as explained class properties will be transformed.
+```
+
+for `Step 4`, we need to add:
+
+```javascript
+// ...
+    loaders: [
+      {
+        test: /\.jsx?$/,
+        loader: "babel-loader",
+        query: {
+          // +++++++++++++++++++++++++++++++++++++
+          // add transform-class-properties plugin
+          plugins: ['transform-class-properties'],
+          // +++++++++++++++++++++++++++++++++++++
+          presets: ['es2015', 'react'],
+        }
+      }
+// ...
+```
+
+That's all!
+
+
 
 ## Redux
 
