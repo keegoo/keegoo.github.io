@@ -202,8 +202,9 @@ npm init --yes
 #### Step 2 - install redux and webpack
 
 ```shell
+npm install --save-dev babel-core babel-preset-es2015 babel-loader
+npm install --save-dev webpack
 npm install --save redux
-npm install --save webpack
 ```
 
 #### Step 3 - create webpack.config.js
@@ -212,7 +213,7 @@ npm install --save webpack
 var webpack = require('webpack');
  
 module.exports = {
-  entry: 'voting.js',
+  entry: './voting.js',
   output: {
     filename: 'bundle.js'
   },
