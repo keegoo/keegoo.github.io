@@ -5,6 +5,8 @@ date:   2017-04-24 15:00:00 +0800
 categories: jekyll update
 ---
 
+> updated 2018-01-20: don't need to compile ES6 to ES5 as major browsers already support ES6.
+
 This tutorial serves more as a renference than a detailed howto.
 
 It's a minimum setup for:
@@ -44,14 +46,13 @@ npm init --yes
 #### Step 3 - install dependencies and tools
 
 ```shell
-npm install --save-dev babel-core babel-preset-es2015 babel-loader babel-preset-react
+npm install --save-dev babel-core babel-loader babel-preset-react
 # babel-core:           name tells it.
-# babel-preset-es2015:  compiles ES2015 to ES5.
 # babel-loader:         transpiling JavaScript files using Babel and webpack.
 # babel-preset-react:   strip flow types and transform JSX into createElement calls.
 npm install --save react react-dom
 # react and react-dom been seperated from version 0.14.
-npm install --save webpack
+npm install --save-dev webpack
 ```
 
 #### Step 4 - edit webpack.config.js
@@ -71,7 +72,7 @@ module.exports = {
         test: /\.jsx?$/,
         loader: "babel-loader",
         query: {
-          presets: ['es2015', 'react'],
+          presets: ['react'],
         }
       }
     ]
@@ -80,7 +81,7 @@ module.exports = {
 // entry:     entry point tells webpack where to start.
 // output:    tells webpack where to output bundled codes.
 // test:      a regular expression that tests what kind of files to run through this loader
-// query:     loader options. Here 'es2015' and 'react' are two presets for babel-loader.
+// query:     loader options.
 ```
 
 #### Step 5 - edit index.html
@@ -134,7 +135,7 @@ Open `http://127.0.0.1:8000/` and take a look!
 
 #### Explain
 
-With `transform-class-properties` plugin we could do `static in class` and `property initialize`. e.g:
+With `transform-class-properties` plugin we could do `static in class` and `property initialize`. This ie.g:
 
 ```javascript
 class App extends React.Component {
@@ -177,7 +178,7 @@ for `Step 4`, we need to add:
           // add transform-class-properties plugin
           plugins: ['transform-class-properties'],
           // +++++++++++++++++++++++++++++++++++++
-          presets: ['es2015', 'react'],
+          presets: ['react'],
         }
       }
 // ...
@@ -202,7 +203,6 @@ npm init --yes
 #### Step 2 - install redux and webpack
 
 ```shell
-npm install --save-dev babel-core babel-preset-es2015 babel-loader
 npm install --save-dev webpack
 npm install --save redux
 ```
@@ -210,35 +210,22 @@ npm install --save redux
 #### Step 3 - create webpack.config.js
 
 ```javascript
-var webpack = require('webpack');
+var webpack = require('webpack')
  
 module.exports = {
   entry: './voting.js',
   output: {
     filename: 'bundle.js'
-  },
-  module: {
-    loaders: [
-      {
-        test: /\.js$/,
-        loader: "babel-loader",
-        query: {
-          presets: ['es2015']
-        }
-      }
-    ]
   }
-};
-// entry:     entry point tells webpack where to start.
-// output:    tells webpack where to output bundled codes.
-// test:      a regular expression that tests what kind of files to run through this loader
-// query:     loader options. Here 'es2015' is a preset for babel-loader.
+}
+// babel not used at all!
 ```
 
 #### Step 4 - create voting.js
 
 ```javascript
-import { createStore } from 'redux'
+// `import` probably will be shipped with Node 9.0.
+const createStore = require('redux').createStore
 
 const counter = (state = 0, action) => {
   switch (action.type) {
@@ -262,7 +249,7 @@ store.subscribe(render)
 store.dispatch({type: 'INCREMENT'})
 ```
 
-#### Final - bunlde
+#### Final - bundle
 
 ```shell
 ./node_modules/.bin/webpack -d
