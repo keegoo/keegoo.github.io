@@ -78,7 +78,8 @@ class Dog():
       print("needs this instance method %s" % name)
     return _method_missing
 
-dog = Dog()                     # => wang wang !!!
+dog = Dog()
+dog.bark()                      # => wang wang !!!
 dog.speak("A", "B", last="C")   # => needs this instance method speak
 # notes: "A", "B" stored in *args; last="C" stores in **kwargs
 ```
