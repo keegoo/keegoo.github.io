@@ -1,13 +1,13 @@
 ---
 layout: post
-title:  "Method missing in Python"
+title:  "method missing in Python"
 date:   2018-03-12 19:20:00 +0800
 categories: notes
 ---
 
-Python doesn’t provide such thing as Ruby's `method_missing`, **directly**. 
+Python doesn’t provide such thing as Ruby's `method_missing`. 
 
-Which means you can impelment one with some Python magics.
+But you can impelment one with some Python magics.
 
 ### Ruby's method_missing
 
@@ -85,7 +85,7 @@ dog.speak("A", "B", last="C")   # => needs this instance method speak
 
 What's happenning under the hood when you invoke `dog.speak()` in Python?
 
-Here's a very good [stackoverflow answer](#ruby-s-method-missing-in-python). 
+Here's a very good [stackoverflow answer][ruby-s-method-missing-in-python]. 
 
 ```text
 o.f(x) is a two-step operation: 
@@ -147,11 +147,11 @@ float.__class__   # => <class 'type'>
 
 So !!! Let's do a comparison.
 
-`dog` is instance of `Dog class`, and `Dog class` is instance of `type class`.
+`dog` is instance of `Dog class`, and `Dog class` is instance of `type`.
 
-If cannot find `speak` in `dog object`, then `Dog class __getattr__` will be invoked (as in instance-method-missing example),
+If cannot find `speak` in `dog object`, then `Dog class __getattr__` will be invoked (as shown in instance-method-missing example),
 
-If cannot find `speak` in `Dog class`, then `type class __getattr__` will be invoked.
+If cannot find `speak` in `Dog class`, then `type __getattr__` will be invoked.
 
 You cannot change `type`'s `__getattr__` as it's buit-in.
 
@@ -159,8 +159,8 @@ But you can change `Dog class`'s class by assign it's **metaclass** to other val
 
 ```python
 # ...
-class Dog(metaclass=Animal):      # << -- this line, change class's class.
-  @classmethod
+class Dog(metaclass=Animal):      # << -- change class's class.
+  @classmethod                    # notes: Animal must inherit from type.
   def bark(cls):
     print("wang wang !!!")
 ```
