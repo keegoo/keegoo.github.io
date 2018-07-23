@@ -7,6 +7,8 @@ categories: jekyll update
 
 > updated 2018-01-20: don't need to compile ES6 to ES5 as major browsers already support ES6.
 
+> updated 2018-07-23: webpack 4
+
 This tutorial serves more as a renference than a detailed howto.
 
 It's a minimum setup for:
@@ -17,7 +19,7 @@ It's a minimum setup for:
 
 ## ReactJS
 
-Let's say our project folder is called `react_demo`. 
+Let's say our project folder is called `react_demo`.
 
 > Following commands are all supposed to be executed under `react-demo` folder!
 
@@ -48,18 +50,16 @@ npm init --yes
 ```shell
 npm install --save-dev babel-core babel-loader babel-preset-react
 # babel-core:           name tells it.
-# babel-loader:         transpiling JavaScript files using Babel and webpack.
+# babel-loader:         transpiling JavaScript files using Babel and Webpack 4.
 # babel-preset-react:   strip flow types and transform JSX into createElement calls.
 npm install --save react react-dom
 # react and react-dom been seperated from version 0.14.
-npm install --save-dev webpack
+npm install --save-dev webpack webpack-cli
 ```
 
 #### Step 4 - edit webpack.config.js
 
 ```js
-var webpack = require('webpack');
- 
 module.exports = {
   entry: './src/App.jsx',
   output: {
@@ -67,21 +67,24 @@ module.exports = {
     path: __dirname + '/build'
   },
   module: {
-    loaders: [
+    rules: [
       {
-        test: /\.jsx?$/,
-        loader: "babel-loader",
-        query: {
-          presets: ['react'],
+        test: /\.jsx$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['react'],
+          }
         }
       }
     ]
   }
-};
+}
 // entry:     entry point tells webpack where to start.
 // output:    tells webpack where to output bundled codes.
 // test:      a regular expression that tests what kind of files to run through this loader
-// query:     loader options.
+// options:   babel-loader options.
 ```
 
 #### Step 5 - edit index.html
@@ -101,12 +104,8 @@ module.exports = {
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-class App extends React.Component {
-  render(){
-    return(
-      <h1>React APP!</h1>
-    )
-  }
+const App = () => {
+  return <h1>React APP!</h1>
 }
 
 ReactDOM.render(<App />, document.getElementById("main"))
@@ -122,13 +121,11 @@ ReactDOM.render(<App />, document.getElementById("main"))
 
 You would find a list of [one-line-servers](https://gist.github.com/willurd/5720255) implemented in different languages.
 
-For me, I use 
+For me, I use
 
     ruby -run -ehttpd . -p8000
 
 Open `http://127.0.0.1:8000/` and take a look!
-
-(It's not recommeneded, but you could simply `open index.html locally with chrome`  and take a look).
 
 
 ## ES6 ReactJS transform-class-properties
@@ -190,7 +187,7 @@ That's all!
 
 ## Redux
 
-Let's say our project folder is called `redux_demo`. 
+Let's say our project folder is called `redux_demo`.
 
 > Following commands are all supposed to be executed under `redux-demo` folder!
 
@@ -211,7 +208,7 @@ npm install --save redux
 
 ```javascript
 var webpack = require('webpack')
- 
+
 module.exports = {
   entry: './voting.js',
   output: {
@@ -234,7 +231,7 @@ const counter = (state = 0, action) => {
     case 'DESCREMENT':
       return state - 1
     default:
-      return state 
+      return state
   }
 }
 
