@@ -9,6 +9,8 @@ categories: jekyll update
 
 > updated 2018-07-23: webpack 4
 
+> updated 2018-12-20: babel 7
+
 This tutorial serves more as a renference than a detailed howto.
 
 It's a minimum setup for:
@@ -48,7 +50,7 @@ npm init --yes
 #### Step 3 - install dependencies and tools
 
 ```shell
-npm install --save-dev babel-core babel-loader babel-preset-react
+npm install --save-dev @babel/core babel-loader @babel/preset-react
 # babel-core:           name tells it.
 # babel-loader:         transpiling JavaScript files using Babel and Webpack 4.
 # babel-preset-react:   strip flow types and transform JSX into createElement calls.
@@ -74,7 +76,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['react'],
+            presets: ['@babel/react'],
           }
         }
       }
