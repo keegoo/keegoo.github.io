@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Setup Ruby local ENV with Docker"
+title:  "setup Ruby local ENV with Docker"
 date:   2020-06-02 11:35:00 +0800
 categories: notes
 ---
