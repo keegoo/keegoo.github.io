@@ -5,7 +5,7 @@ date:   2020-06-02 11:35:00 +0800
 categories: notes
 ---
 
-In Ruby, [rbenv][rbenv-github] was used to manage different Ruby versions. But if you have the needs to develop in multiple languages, it's still going to be a mess even with the help of [pyenv][pyenv-github], [nvm][nvm-github] or similarities. Because they themselves have to be installed first if you would like to hand on these languages in the long run.
+In Ruby, [rbenv][rbenv-github] was used to manage different Ruby versions. But if you have the needs to develop in multiple languages, it's still going to be a mess even with the help of [pyenv][pyenv-github], [nvm][nvm-github] or similarities. Because they themselves have to be installed first if you would like to hand on these languages in the long run. And on and on, your system is likely to have more than a dozen of languages with different versions.
 
 With Docker, the situation could be alleviated a lot. E.g. if you would like to learn Python but don't know if you're going to use it primarily in the future, it's not a bad idea to try out everything inside a Docker container.
 
