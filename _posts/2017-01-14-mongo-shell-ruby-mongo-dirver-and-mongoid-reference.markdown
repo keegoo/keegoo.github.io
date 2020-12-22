@@ -9,9 +9,9 @@ There're two MongoDB drivers in Ruby: [Ruby MongoDB Driver](https://github.com/m
 
 `Ruby MongoDB Driver`'s syntax is very similiar with `Mongo Shell`, which is meant to.
 
-`Mongoid`, on the other hand, tried to provide a familiar API to Active Record. Even though `Mongoid` is built on top of `Ruby MongoDB Driver`, they're quite different in syntax. Plus `Mongoid` includes extra features like validation and relations which are quite common in Rails.
+`Mongoid`, on the other hand, trying to provide a familiar API to Active Record. Even though `Mongoid` is built on top of `Ruby MongoDB Driver`, they're quite different in syntax. Plus `Mongoid` includes extra features like validation and relations which are quite common in Rails.
 
-I always found myself lost in the syntax of these two drivers. So I wrote this article to help me out when I trapped again.
+I'm always lost in the syntax of these two drivers. So I wrote this article to help me out.
 
 I'm going to show examples in `Mongo Shell`, `Ruby MongoDB Driver` and `Mongoid` for the same MongoDB operations. 
 
@@ -26,14 +26,16 @@ I'm going to show examples in `Mongo Shell`, `Ruby MongoDB Driver` and `Mongoid`
   - [Field Update Operation](#field-update-operation)
   - [Limit Fields](#limit-fields)
   - [Distinct](#distinct)
+  - [Sort](#sort)
+  - [Others](#others)
 
 
 ## Versions
 
-Here's the versions I used for this article.
+Here are the versions information.
 
-{% highlight shell %}
-MyBook:~ keegoo$ mongod --version
+```shell
+~$ mongod --version
 # db version v3.2.11
 # git version: 009580ad490190ba33d1c6253ebd8d91808923e4
 # OpenSSL version: OpenSSL 1.0.2k  26 Jan 2017
@@ -43,20 +45,19 @@ MyBook:~ keegoo$ mongod --version
 #     distarch: x86_64
 #     target_arch: x86_64
 
-MyBook:~ keegoo$ mongo --version
+~$ mongo --version
 # MongoDB shell version: 3.2.11
 
-MyBook:~ keegoo$ gem list | grep mongo
+~$ gem list | grep mongo
 # mongo (2.4.1)
 # mongoid (6.1.0)
-{% endhighlight %}
-
+```
 
 ## Test Data
 
 Mongo provides a very good test data for you to play with. You could import these data by following the [steps](https://docs.mongodb.com/getting-started/shell/import-data/).
 
-We don't need to import these data. But we need to keep these data in mind. Basically, we should know:
+We don't need to import these data. But we need to keep it in mind. Basically, we should know:
   - each document represent a *restanrant*; 
   - *restaurant address* is a hash; 
   - *restaurants grades* is an array;
@@ -90,15 +91,15 @@ We don't need to import these data. But we need to keep these data in mind. Basi
 
 ## Connection
 
-`mongo shell`
+#### mongo shell
 
 ```shell
-MyBook:~ keegoo$ mongo 127.0.0.1:27017/test -u <dbuser> -p <dbpassword>
+~$ mongo 127.0.0.1:27017/test -u <dbuser> -p <dbpassword>
 # if your DB instance is running in local and security was not enabled, simply type:
-# MyBook:~ keegoo$ mongo
+# ~$ mongo
 ```
 
-`ruby mongo driver`
+#### ruby mongo driver
 
 ```ruby
 require 'mongo'
@@ -116,7 +117,7 @@ options = {
 client = Mongo::Client.new(host, options)
 ```
 
-`mongoid`
+#### mongoid
 
 Create a `mongoid.yml` file with following content.
 
@@ -138,7 +139,7 @@ development:
       uri: mongodb://<user>:<password>@127.0.0.1:27017/test
 ```
 
-Connect.
+Then, connect to DB with following codes.
 
 ```ruby
 require 'mongoid'
@@ -148,7 +149,7 @@ Mongoid.load!("mongoid.yml", :development)
 
 ## Create Operation
 
-`Mongo Shell`
+#### Mongo Shell
 
 ```javascript
 db.restaurants.insert({name: "my restaurants", borough: "Shenzhen", cuisine: "Soup" })
@@ -159,7 +160,7 @@ db.restaurants.insertMany([
 ])
 ```
 
-`Ruby Mongo Driver`
+#### Ruby Mongo Driver
 
 ```ruby
 client["restaurants"].insert_one({name: "my restaurants", borough: "Shenzhen", cuisine: "Soup"})
@@ -170,7 +171,7 @@ client["restaurants"].insert_many([
 ])
 ```
 
-`Mongoid`
+#### Mongoid
 
 ```ruby
 # note: Restanrant<class name> is singular!
@@ -191,31 +192,29 @@ Restaurant.create([
 ])
 ```
 
-
 ## Exists
 
-`mongo shell`
+#### mongo shell
 
 ```javascript
 db.generators.find({name: 'my restaurants 01'}).count()
 ```
 
-`Ruby Mongo Driver`
+#### Ruby Mongo Driver
 
 ```ruby
 client["restaurants"].find({name: "my restaurants 01"}).count()
 ```
 
-`Mongoid`
+#### Mongoid
 
 ```ruby
 Restaurant.where({name: "my restaurants 01"}).exists?
 ```
 
-
 ## Query Operation
 
-`mongo shell`
+#### mongo shell
 
 ```javascript
 // == find by ID ==
@@ -248,7 +247,7 @@ db.restaurants.find({
 })
 ```
 
-`ruby mongo driver`
+#### ruby mongo driver
 
 ```ruby
 # == find by ID ==
@@ -281,7 +280,7 @@ client["restaurants"].find({
 })
 ```
 
-`mongoid`
+#### mongoid
 
 ```ruby
 class Restaurant
@@ -332,7 +331,7 @@ Restaurant.where({
 
 ## Arrays and Hashes
 
-`mongo shell`
+#### mongo shell
 
 ```javascript
 // ====  hash  ====
@@ -345,7 +344,7 @@ db.restaurants.find({ 'address.coord': {$size: 2} })
 db.restaurants.find({ grades: {$elemMatch: {grade: 'C', score: 10} } })
 ```
 
-`ruby mongo driver`
+#### ruby mongo driver
 
 ```ruby
 # ====  hash  ====
@@ -358,7 +357,7 @@ client["restaurants"].find({ "address.coord" => {"$size" => 2} })
 client["restaurants"].find({ grades: {"$elemMatch" => {grade: "C", score: 10}} })
 ```
 
-`mongoid`
+#### mongoid
 
 ```ruby
 # ====  hash  ====
@@ -373,7 +372,7 @@ Restaurant.where({ grades: {"$elemMatch" => {grade: "C", score: 10}} })
 
 ## Update Operation
 
-`mongo shell`
+#### mongo shell
 
 ```javascript
 // == update one ==
@@ -424,7 +423,7 @@ db.restaurants.update(
 )
 ```
 
-`ruby mongo driver`
+#### ruby mongo driver
 
 ```ruby
 # == update one ==
@@ -474,7 +473,7 @@ client["restaurants"].update_one(
 )
 ```
 
-`mongoid`
+#### mongoid
 
 ```ruby
 # == update one ==
@@ -500,10 +499,9 @@ Restaurant.where({
 }).set("grades.$.grade": "B")
 ```
 
-
 ## Field Update Operation
 
-`mongo shell`
+#### mongo shell
 
 ```javascript
 // =====  inc =====
@@ -522,7 +520,7 @@ db.restaurants.update(
 
 ```
 
-`ruby mongo driver`
+#### ruby mongo driver
 
 ```ruby
 # =====  inc =====
@@ -537,7 +535,7 @@ client["restaurants"].update_one(
 )
 ```
 
-`mongoid`
+#### mongoid
 
 ```ruby
 # =====  inc =====
@@ -552,7 +550,7 @@ Restaurant.find("58f4baa603bb14a0c4304e19").inc({"address.coord.0" => 10, "addre
 
 Return specific fields from the query instead of the whole document.
 
-`mongo shell`
+#### mongo shell
 
 ```javascript
 // ===  single  ===
@@ -561,7 +559,7 @@ db.restaurants.find({borough: 'Bronx', cuisine: 'Bakery'}, {name: 1})
 db.restaurants.find({borough: 'Bronx', cuisine: 'Bakery'}, {name: 1, restaurant_id: 1})
 ```
 
-`ruby mongo driver`
+#### ruby mongo driver
 
 ```ruby
 # ===  single  ===
@@ -575,7 +573,7 @@ client['restaurants'].find({borough: "Bronx", cuisine: "Bakery"}).projection({na
 client['restaurants'].find({borough: "Bronx", cuisine: "Bakery"}, projection: {name: 1, restaurant_id: 1})
 ```
 
-`mongoid`
+#### mongoid
 ```ruby
 # ...
 # omit class definition
@@ -589,7 +587,7 @@ Restaurant.where({borough: "Bronx", cuisine: "Bakery"}).only(:name, :restaurant_
 
 The values returned by distinct is an array. 
 
-`mongo shell`
+#### mongo shell
 
 ```javascript
 // == collection ==
@@ -598,7 +596,7 @@ db.restaurants.distinct('name')
 db.restaurants.distinct('name', {borough: 'Bronx', cuisine: 'Bakery'})
 ```
 
-`ruby mongo driver`
+#### ruby mongo driver
 
 ```ruby
 # == collection ==
@@ -607,7 +605,7 @@ client["restaurants"].find().distinct("name")
 client["restaurants"].find({borough: "Bronx", cuisine: "Bakery"}).distinct("name")
 ```
 
-`mongoid`
+#### mongoid
 
 ```ruby
 # == collection ==
@@ -616,80 +614,21 @@ Restaurant.where({}).distinct("name")
 Restaurant.where({borough: "Bronx", cuisine: "Bakery"}).distinct("name")
 ```
 
+## Sort
 
-## (not finished)things need to be digested later
+#### mongo shell
 
-## sort
-
-`mongo shell`
-
-{% highlight ruby %}
+```ruby
 db.schedulers.find().sort({'schedule.time': -1})
-{% endhighlight %}
+```
 
-`ruby mongo driver`
+#### ruby mongo driver
 
-`mongoid`
+#### mongoid
 
-{% highlight ruby %}
+```ruby
 Scheduler.order_by("schedule.time" => :desc).limit(30)
-{% endhighlight %}
-
-
-### weird of mongoid
-
-say we had time series data in mongodb as following.
-
-    {
-      "_id" : ObjectId("587c35108fe879199c3a3c07"),
-      "server" : "CONGY-7W4",
-      "time" : "2017-01-13T07:00:00Z",
-      "cpu_percent" : {
-        "0" : {
-          "0" : 20,
-          "6" : 18
-        }
-      }
-    }
-
-you may want to insert another data slice to `cpu_percent`
-
-{% highlight ruby %}
-doc = SystemMonitor.find("587c35108fe879199c3a3c07")
-doc.set("cpu_percent.0.12" => 22)
-{% endhighlight %}
-
-But you would find cpu_percent been overwritten by the new data. 
-
-    {
-      ...
-      "cpu_percent" : {
-        "0" : {
-          "12" : 22
-        }
-      }
-    }
-
-What you were expected to see should be.
-
-    {
-      ...
-      "cpu_percent" : {
-        "0" : {
-          "0" : 20,
-          "6" : 18,
-          "12": 22
-        }
-      }
-    }
-
-How to do that? It turns out you need to use `where` instead of `find` to query the doc at first hand. 
-{% highlight ruby %}
-doc = SystemMonitor.where(server: "CONGY-7W4")
-doc.set("cpu_percent.0.12" => 22)
-{% endhighlight %}
-
-Why?
+```
 
 ## Others
 
@@ -698,6 +637,7 @@ Why?
 In MongoDB, a write operation is atomic on the level of a single document, even if the operation modifies multiple embedded documents within a single document.
 
 #### Date
+
 ```javascript
 // ====  date  ====
 db.restaurants.find({ 'grades.0.date': new Date(1393804800000) })
