@@ -5,7 +5,7 @@ date:   2020-06-02 11:35:00 +0800
 categories: notes
 ---
 
-In Ruby, [rbenv][rbenv-github] was used to manage different Ruby versions. But if you have the needs to develop in multiple languages, it's still going to be a mess even with the help of [pyenv][pyenv-github], [nvm][nvm-github] or similarities. Because they themselves have to be installed first if you would like to hand on these languages in the long run. And on and on, your system is likely to have more than a dozen of languages with different versions.
+In Ruby, [rbenv][rbenv-github] was used to manage different Ruby versions. But if you need to develop in multiple languages, it's going to be a mess even with the help of [pyenv][pyenv-github], [nvm][nvm-github] or similarities. Because they themselves have to be installed first. On and on, your system is likely to have more than a dozen of languages with different versions.
 
 With Docker, the situation could be alleviated a lot. E.g. if you would like to learn Python but don't know if you're going to use it primarily in the future, it's not a bad idea to try out everything inside a Docker container.
 
@@ -98,9 +98,9 @@ root@45a2ffb62b06:/usr/src/opensaz# bundle install
 root@45a2ffb62b06:/usr/src/opensaz# ruby test/opensaz_test/*_test.rb
 ```
 
-Because the current directory is mounted into the container, any changes in the host will be reflected inside the container. Which means you can use the favorite editor for editing as always.
+Because the current directory is mounted into the container, any changes in the host will be reflected inside the container. Which means you can use your favorite editor for editing rather than having to use `vim` inside the docker container.
 
-Further on, if you want docker containers to persist data, you could create a docker volume. If multiple languages are needed, you could create a customized docker image.
+Further on, if you want docker container to persist data, you could create a docker volume. And if multiple languages are needed, you could have them all installed in a customized docker image.
 
 [rbenv-github]: https://github.com/rbenv/rbenv
 [pyenv-github]: https://github.com/pyenv/pyenv
