@@ -55,7 +55,7 @@ Take the following as an example. [Nokogiri][nokogiri-github] was needed.
 
 ```ruby
 # nokogiri_demo.rb
-require nokogiri
+require 'nokogiri'
 doc = Nokogiri::XML("<greeting>Hello World!</greeting>")
 puts doc.text
 ```
