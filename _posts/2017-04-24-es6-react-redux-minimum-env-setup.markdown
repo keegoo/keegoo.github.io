@@ -5,6 +5,8 @@ date:   2017-04-24 15:00:00 +0800
 categories: jekyll update
 ---
 
+> updated 2023-08-01: webpack 5
+
 > updated 2018-01-20: don't need to compile ES6 to ES5 as major browsers already support ES6.
 
 > updated 2018-07-23: webpack 4
@@ -251,7 +253,7 @@ store.dispatch({type: 'INCREMENT'})
 #### Final - bundle
 
 ```shell
-./node_modules/.bin/webpack -d
+./node_modules/.bin/webpack
 ```
 
 #### Test
