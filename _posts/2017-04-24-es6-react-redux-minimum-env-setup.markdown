@@ -118,7 +118,7 @@ ReactDOM.render(<App />, document.getElementById("main"))
 #### Final - bundle
 
 ```shell
-./node_modules/.bin/webpack -d
+./node_modules/.bin/webpack
 ```
 
 #### Test
