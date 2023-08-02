@@ -65,6 +65,7 @@ npm install --save-dev webpack webpack-cli
 
 ```js
 module.exports = {
+  mode: 'development',
   entry: './src/App.jsx',
   output: {
     filename: 'bundle.js',
@@ -85,9 +86,10 @@ module.exports = {
     ]
   }
 }
+// mode:      one of ['development', 'production', 'none'], there's built-in optimizations for each mode.
 // entry:     entry point tells webpack where to start.
 // output:    tells webpack where to output bundled codes.
-// test:      a regular expression that tests what kind of files to run through this loader
+// test:      a regular expression that tests what kind of files to run through this loader.
 // options:   babel-loader options.
 ```
 
