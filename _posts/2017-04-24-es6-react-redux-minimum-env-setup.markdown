@@ -5,13 +5,13 @@ date:   2017-04-24 15:00:00 +0800
 categories: jekyll update
 ---
 
-> updated 2023-08-01: webpack 5
+> updated 2023-08-01: webpack 5 and React 18
 
-> updated 2018-01-20: don't need to compile ES6 to ES5 as major browsers already support ES6.
+> updated 2018-12-20: babel 7
 
 > updated 2018-07-23: webpack 4
 
-> updated 2018-12-20: babel 7
+> updated 2018-01-20: don't need to compile ES6 to ES5 as major browsers already support ES6.
 
 This tutorial serves more as a renference than a detailed howto.
 
@@ -108,13 +108,15 @@ module.exports = {
 
 ```javascript
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 
 const App = () => {
   return <h1>React APP!</h1>
 }
 
-ReactDOM.render(<App />, document.getElementById("main"))
+createRoot(document.getElementById("main")).render(
+    <App />
+)
 ```
 
 #### Final - bundle
