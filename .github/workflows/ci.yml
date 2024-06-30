@@ -22,4 +22,4 @@ jobs:
         node-version: '14'
 
     - name: Install dependencies
-      run: echo "hello world"
+      run: echo "hello world 2"
